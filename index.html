@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Qarz Daftar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<section id="login" class="login">
+  <div class="login-art">
+    <div class="brand"><i>Q</i> Qarz Daftar</div>
+    <div>
+      <h1>Har bir qarz o'z o'rnida.</h1>
+      <p style="margin-top:14px">Kim qancha qarz olgani, qachon va qancha to'lagani — hammasi bir daftarda.</p>
+    </div>
+    <div class="ledger-sample" aria-hidden="true">
+      <div><span>Umumiy qarz</span><span class="num">4 800 000</span></div>
+      <div><span>To'langan</span><span class="num">− 1 500 000</span></div>
+      <div><span>Qoldiq</span><span class="num">3 300 000</span></div>
+    </div>
+  </div>
+  <div class="login-form">
+    <form id="loginForm" novalidate>
+      <div><h2>Tizimga kirish</h2><p class="hint">Email va parolingizni kiriting</p></div>
+      <div class="field"><label for="lEmail">Email</label><input class="input" id="lEmail" type="email" autocomplete="username" value="admin@qarzdaftar.uz"></div>
+      <div class="field"><label for="lPass">Parol</label><input class="input" id="lPass" type="password" autocomplete="current-password" value="admin123"></div>
+      <div class="err" id="lErr" role="alert"></div>
+      <button class="btn primary" type="submit">Kirish</button>
+      <p class="hint">Demo: admin@qarzdaftar.uz / admin123</p>
+    </form>
+  </div>
+</section>
+
+<div id="app" class="app hidden">
+  <aside class="side">
+    <div class="brand"><i>Q</i> Qarz Daftar</div>
+    <nav class="nav" id="nav"></nav>
+    <div class="me">
+      <div class="who-me"><b id="meName"></b><span id="meRole"></span></div>
+      <button id="logout" title="Chiqish" aria-label="Chiqish">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      </button>
+    </div>
+  </aside>
+  <main class="main" id="view"></main>
+</div>
+
+<div id="modalRoot"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
