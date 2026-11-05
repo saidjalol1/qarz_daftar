@@ -1,0 +1,65 @@
+:root{
+  --bg:#EEF1F4;--surface:#fff;--ink:#14202B;--muted:#64717F;--line:#DDE3E9;
+  --brand:#0E3B43;--brand-2:#175865;--accent:#2F5BEA;--debt:#B42318;--debt-bg:#FDECEA;
+  --ok:#0A7A4B;--ok-bg:#E3F5EC;--warn:#9A6700;--warn-bg:#FFF4D6;
+  --r:10px;--r-lg:16px;--sh:0 1px 2px rgba(20,32,43,.06),0 8px 24px -12px rgba(20,32,43,.18);
+}
+*{box-sizing:border-box;margin:0}
+html{font-size:15px}
+html,body{overflow-x:clip}
+body{font-family:'Onest',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hidden{display:none!important}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.field{display:grid;gap:6px}
+.field label{font-size:.85rem;font-weight:500;color:var(--muted)}
+.input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);background:#fff;transition:border-color .15s,box-shadow .15s}
+.input:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px rgba(47,91,234,.15)}
+.input[disabled]{background:#F3F5F7;color:var(--muted)}
+.err{color:var(--debt);font-size:.88rem;min-height:1.2em}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:var(--r);border:1px solid var(--line);background:#fff;font-weight:500;transition:background .15s,transform .05s}
+.btn:hover{background:#F5F7F9}.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.primary:hover{background:var(--brand-2)}
+.btn.danger{color:var(--debt)}
+.btn.sm{padding:6px 10px;font-size:.85rem}
+.btn.icon{padding:8px;width:36px;height:36px}
+
+.brand{font-weight:700;font-size:1.15rem;color:#fff;padding:4px 10px 18px;display:flex;align-items:center;gap:10px}
+.brand i{width:28px;height:28px;border-radius:7px;background:#fff;color:var(--brand);display:grid;place-items:center;font-style:normal;font-weight:800}
+
+.script-switch{display:flex;background:rgba(255,255,255,.12);border-radius:8px;padding:3px;margin:8px 10px 12px;flex:none}
+.script-switch button{flex:1;border:0;background:none;color:#A9C6CA;padding:6px 8px;border-radius:6px;font-size:.78rem;font-weight:600;letter-spacing:.02em}
+.script-switch button.on{background:#fff;color:var(--brand)}
+
+.ov{position:fixed;inset:0;background:rgba(10,22,30,.5);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50;animation:fade .15s}
+.ov-ask{z-index:70}
+.modal{background:#fff;border-radius:var(--r-lg);width:100%;max-width:560px;max-height:92vh;overflow:auto;box-shadow:0 24px 60px -12px rgba(0,0,0,.4);animation:pop .18s}
+.modal.wide{max-width:760px}
+.modal.ask{max-width:400px}
+.modal.ask .mb p{color:var(--ink);line-height:1.55}
+.mh{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:1}
+.mh h3{font-size:1.15rem}
+.mb{padding:20px 22px;display:grid;gap:14px}
+.mf{padding:14px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;position:sticky;bottom:0;background:#fff}
+@keyframes fade{from{opacity:0}}@keyframes pop{from{transform:translateY(8px);opacity:0}}
+
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:99px;z-index:99;font-size:.9rem;animation:pop .2s}
+
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:900px){
+  .row{grid-template-columns:1fr}
+  .ov{align-items:flex-end;padding:0}
+  .modal{max-width:100%;max-height:94vh;border-radius:16px 16px 0 0;margin:0}
+  .mh,.mb,.mf{padding:14px 16px}
+  .mh h3{font-size:1.02rem;padding-right:8px;line-height:1.3}
+  .mf .btn{flex:1 1 calc(50% - 10px)}
+  .toast{bottom:88px;max-width:calc(100% - 24px);text-align:center}
+}

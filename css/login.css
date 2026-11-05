@@ -1,0 +1,22 @@
+.login{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr}
+.login-art{background:var(--brand);color:#E6F1F2;padding:56px;display:flex;flex-direction:column;justify-content:space-between;
+  background-image:repeating-linear-gradient(transparent 0 35px,rgba(255,255,255,.07) 35px 36px)}
+.login-art h1{font-size:2.6rem;line-height:1.1;font-weight:700;max-width:12ch;letter-spacing:-.02em}
+.login-art p{max-width:38ch;color:#A9C6CA}
+.ledger-sample{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:var(--r);padding:16px 18px;max-width:360px}
+.ledger-sample div{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.2);font-size:.92rem}
+.ledger-sample div:last-child{border:0;font-weight:600}
+.login-form{display:flex;align-items:center;justify-content:center;padding:32px;background:var(--surface)}
+.login-form form{width:100%;max-width:340px;display:grid;gap:16px}
+.login-form h2{font-size:1.6rem;letter-spacing:-.01em}
+.login-form .hint{color:var(--muted);font-size:.88rem}
+.login-form .script-switch{background:var(--bg);margin:0 0 4px}
+.login-form .script-switch button{color:var(--muted)}
+.login-form .script-switch button.on{background:var(--brand);color:#fff}
+
+@media(max-width:900px){
+  .login{grid-template-columns:1fr}
+  .login-art{display:none}
+  .login-form{padding:24px 16px;align-items:flex-start;padding-top:48px}
+  .login-form form{max-width:none}
+}
