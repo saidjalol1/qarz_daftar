@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block page %}login{% endblock %}
+
+{% block body %}
+<section class="login">
+  <div class="login-art">
+    <div class="brand"><i>Q</i> <span data-i18n="app.name">Qarz Daftar</span></div>
+    <div>
+      <h1 data-i18n="login.hero">Har bir qarz o'z o'rnida.</h1>
+      <p style="margin-top:14px" data-i18n="login.lead">Kim qancha qarz olgani, qachon va qancha to'lagani — hammasi bir daftarda.</p>
+    </div>
+    <div class="ledger-sample" aria-hidden="true">
+      <div><span data-i18n="login.sampleTotal">Umumiy qarz</span><span class="num">4 800 000</span></div>
+      <div><span data-i18n="login.samplePaid">To'langan</span><span class="num">− 1 500 000</span></div>
+      <div><span data-i18n="login.sampleLeft">Qoldiq</span><span class="num">3 300 000</span></div>
+    </div>
+  </div>
+  <div class="login-form">
+    <form id="loginForm" novalidate>
+      {% csrf_token %}
+      <div class="script-switch" data-script-switch></div>
+      <div><h2 data-i18n="login.title">Tizimga kirish</h2><p class="hint" data-i18n="login.hint">Email va parolingizni kiriting</p></div>
+      <div class="field"><label for="lEmail">Email</label><input class="input" id="lEmail" name="email" type="email" autocomplete="username"></div>
+      <div class="field">
+        <label for="lPass" data-i18n="login.pass">Parol</label>
+        <div class="pw-wrap">
+          <input class="input" id="lPass" name="password" type="password" autocomplete="current-password">
+          <button type="button" class="pw-eye" id="toggleLoginPass" aria-label="Toggle password">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="err" id="lErr" role="alert"></div>
+      <button class="btn primary" type="submit" data-i18n="login.submit">Kirish</button>
+    </form>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/storage.js' %}"></script>
+<script src="{% static 'js/i18n.js' %}"></script>
+<script src="{% static 'js/helpers.js' %}"></script>
+<script src="{% static 'js/ui.js' %}"></script>
+<script src="{% static 'js/pages/login.js' %}"></script>
+{% endblock %}

@@ -7,7 +7,6 @@ const nowISO = () => new Date(Date.now() - new Date().getTimezoneOffset() * 6e4)
 const seed = () => {
   const c = [uid(), uid(), uid()], p = [uid(), uid(), uid()];
   return {
-    users: [{ id: uid(), name: 'Super Admin', email: 'admin@qarzdaftar.uz', phone: '+998901112233', tg: 'superadmin', pass: 'admin123', role: 'super' }],
     clients: [
       { id: c[0], name: 'Aziz Karimov', phone: '+998901234567', tg: 'aziz_k' },
       { id: c[1], name: 'Dilnoza Yusupova', phone: '+998935554433', tg: '' },

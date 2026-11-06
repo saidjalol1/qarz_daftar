@@ -23,10 +23,11 @@ function viewBase() {
   document.querySelectorAll('[data-e]').forEach(b => b.onclick = () => baseForm(rows.find(r => r.id === b.dataset.e)));
   document.querySelectorAll('[data-d]').forEach(b => b.onclick = async () => {
     const id = b.dataset.d;
-    if (isC && db.debts.some(d => d.clientId === id)) { toast(t('base.hasDebts')); return; }
+    if (isC && db.debts.some(d => d.clientId === id)) { toast(disp(t('base.hasDebts'))); return; }
     if (!await ask(t('base.del'), t('base.delOk'))) return;
     if (isC) db.clients = db.clients.filter(x => x.id !== id); else db.products = db.products.filter(x => x.id !== id);
-    save(); viewBase();
+    save(); viewBase(); toast(disp(t('base.saved')));
+  });
   });
 }
 
@@ -39,16 +40,23 @@ function baseForm(r) {
     <div class="field"><label>${t('base.tg')}</label><input class="input" id="bTg" placeholder="username" value="${esc(r?.tg)}"></div></div>` : ''}
     <div class="err" id="bErr"></div>`,
     `<button class="btn" data-x>${t('debt.cancel')}</button><button class="btn primary" id="bSave">${t('debt.save')}</button>`);
+  
+  // Phone input auto-populate with +
+  if (isC) setupPhoneInput($('#bPhone'));
+  
   $('#bSave').onclick = () => {
     const name = $('#bName').value.trim();
-    if (!name) { $('#bErr').textContent = isC ? t('base.needNameC') : t('base.needNameP'); return; }
+    if (!name) { $('#bErr').textContent = disp(isC ? t('base.needNameC') : t('base.needNameP')); return; }
     const o = r || { id: uid() }; o.name = name;
     if (isC) {
-      o.phone = $('#bPhone').value.trim(); o.tg = $('#bTg').value.trim().replace(/^@/, '');
-      if (!o.phone) { $('#bErr').textContent = t('base.needPhone'); return; }
+      const phone = $('#bPhone').value.trim();
+      o.phone = phone;
+      o.tg = $('#bTg').value.trim().replace(/^@/, '');
+      if (!phone || phone === '+') { $('#bErr').textContent = disp(t('base.needPhone')); return; }
+      if (phone.length < 4) { $('#bErr').textContent = disp(t('base.invalidPhone') || 'Telefon raqam noto\'g\'ri'); return; }
     }
     if (!r) (isC ? db.clients : db.products).push(o);
-    save(); closeModal(); viewBase(); toast(t('base.saved'));
+    save(); closeModal(); viewBase(); toast(disp(t('base.saved')));
   };
 }
 

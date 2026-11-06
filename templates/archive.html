@@ -1,0 +1,13 @@
+{% extends "app.html" %}
+{% load static %}
+
+{% block page %}archive{% endblock %}
+
+{% block page_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+<script src="{% static 'js/groups.js' %}"></script>
+<script src="{% static 'js/nakladnoy.js' %}"></script>
+<script src="{% static 'js/debt.js' %}"></script>
+<script src="{% static 'js/pages/archive.js' %}"></script>
+{% endblock %}

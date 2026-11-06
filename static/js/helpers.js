@@ -3,6 +3,25 @@
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
 
+// Helper function to setup phone input with auto + prefix
+function setupPhoneInput(input) {
+  if (!input) return;
+  input.addEventListener('focus', () => {
+    if (!input.value) input.value = '+';
+  });
+  input.addEventListener('input', (e) => {
+    let val = e.target.value;
+    if (!val.startsWith('+')) {
+      e.target.value = '+' + val.replace(/^\+/, '');
+    }
+  });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Backspace' && input.value === '+') {
+      e.preventDefault();
+    }
+  });
+}
+
 const CUR_KEY = 'qd_cur';
 const CBU_USD = 'https://cbu.uz/uz/arkhiv-kursov-valyut/json/USD/';
 let displayCur = localStorage.getItem(CUR_KEY) === 'usd' ? 'usd' : 'uzs';
