@@ -8,3 +8,4 @@ media/
 venv/
 logs/
 *.log
+.vscode
