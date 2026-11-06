@@ -4,7 +4,8 @@ let q = '';
 
 function viewDebts() {
   const unpaid = activeDebts().filter(d => left(d) > 0);
-  const tot = unpaid.reduce((s, d) => s + d.total, 0), pd = unpaid.reduce((s, d) => s + paid(d), 0);
+  const tot = unpaid.reduce((s, d) => s + convert(d.total, nativeCur(d), displayCur), 0);
+  const pd = unpaid.reduce((s, d) => s + convert(paid(d), nativeCur(d), displayCur), 0);
   const debtors = new Set(unpaid.map(d => d.clientId)).size;
   $('#view').innerHTML = `
     <div class="head"><div><h2>${t('debts.title')}</h2><p>${t('debts.sub')}</p></div>

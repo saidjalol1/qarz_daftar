@@ -40,8 +40,8 @@ function renderGrouped(target, rows, emptyTitle, emptyHint) {
     const tab = dateTab[g.clientId] || 'all';
     const shown = g.debts.filter(d => inDateTab(d.date, tab));
     const c = client(g.clientId);
-    const tot = shown.reduce((s, d) => s + d.total, 0);
-    const due = shown.reduce((s, d) => s + left(d), 0);
+    const tot = shown.reduce((s, d) => s + convert(d.total, nativeCur(d), displayCur), 0);
+    const due = shown.reduce((s, d) => s + convert(left(d), nativeCur(d), displayCur), 0);
     const tabs = [['all', 'date.all'], ['today', 'date.today'], ['week', 'date.week'], ['month', 'date.month']];
     return `<div class="arch-g ${closedGroups.has(g.clientId) ? 'closed' : ''}" data-gid="${g.clientId}">
       <button type="button" class="arch-h">
@@ -54,9 +54,9 @@ function renderGrouped(target, rows, emptyTitle, emptyHint) {
         ${shown.length ? `<table class="stack"><thead><tr><th>№</th><th>${t('nak.date')}</th><th class="r">${t('debts.colTotal')}</th><th class="r">${t('debts.colLeft')}</th><th>${t('debts.colStatus')}</th>${showActs ? '<th></th>' : ''}</tr></thead><tbody>
           ${shown.map(d => {
             const lft = left(d);
-            return `<tr class="click" data-id="${d.id}"><td class="who"><b>№${d.no}</b><span>${d.items.length ? d.items.map(i => esc(disp(i.name))).join(', ') : t('nak.noItems')}</span></td>
-            <td class="hm">${fdate(d.date)}</td><td class="r hm num">${som(d.total)}</td>
-            <td class="r num"><b style="color:${lft > 0 ? 'var(--debt)' : 'var(--ok)'}">${som(lft)}</b></td>
+            return `<tr class="click" data-id="${d.id}"><td class="who"><b>№${d.no}</b><span>${d.items.length ? d.items.map(i => esc(disp(i.name))).join(', ') : t('nak.noItems')} · ${t('cur.' + nativeCur(d))}</span></td>
+            <td class="hm">${fdate(d.date)}</td><td class="r hm num">${somDebt(d.total, d)}</td>
+            <td class="r num"><b style="color:${lft > 0 ? 'var(--debt)' : 'var(--ok)'}">${somDebt(lft, d)}</b></td>
             <td class="hm">${statusPill(d)}</td>
             ${showActs ? `<td class="r acts"><button class="btn sm" data-edit="${d.id}">${t('debt.edit')}</button> <button class="btn sm danger" data-del="${d.id}">${t('debt.del')}</button></td>` : ''}</tr>`;
           }).join('')}

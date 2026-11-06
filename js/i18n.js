@@ -24,7 +24,7 @@ const I18N = {
     'status.paid': "To'langan", 'status.part': 'Qisman', 'status.unpaid': "To'lanmagan",
     'debt.new': 'Yangi qarz', 'debt.debtor': 'Qarzdor', 'debt.datetime': 'Sana va vaqt',
     'debt.items': 'Tovarlar', 'debt.optional': '(ixtiyoriy)', 'debt.addItem': '+ Tovar biriktirish',
-    'debt.manual': "Summani qo'lda kiritaman", 'debt.sum': "Qarz summasi (so'm)", 'debt.total': 'Jami qarz',
+    'debt.manual': "Summani qo'lda kiritaman", 'debt.sum': 'Qarz summasi', 'debt.total': 'Jami qarz',
     'debt.save': 'Saqlash', 'debt.cancel': 'Bekor qilish',
     'debt.needClient': "Avval Baza bo'limida mijoz qo'shing",
     'debt.needProduct': "Avval Baza bo'limida tovar qo'shing",
@@ -80,7 +80,10 @@ const I18N = {
     'users.needName': 'Ism familiyani kiriting.', 'users.badEmail': "Email noto'g'ri formatda.",
     'users.shortPass': "Parol kamida 6 belgidan iborat bo'lsin.",
     'users.exists': "Bu email bilan foydalanuvchi mavjud.", 'users.added': "Foydalanuvchi qo'shildi",
-    'ui.close': 'Yopish', 'ui.ok': 'Tasdiqlash', 'script.latn': 'Lotin', 'script.cyrl': 'Kirill'
+    'ui.close': 'Yopish', 'ui.ok': 'Tasdiqlash', 'script.latn': 'Lotin', 'script.cyrl': 'Kirill',
+    'cur.uzs': "So'm", 'cur.usd': 'USD', 'cur.rate': '1 USD kurs',
+    'cur.cbu': 'Markaziy bank', 'cur.cbuOff': "Oxirgi saqlangan kurs",
+    'debt.currency': 'Valyuta', 'nak.native': 'Qarz valyutasi'
   },
   cyrl: {
     'app.title': 'Қарз Дафтар', 'app.name': 'Қарз Дафтар', 'currency': 'сўм',
@@ -102,7 +105,7 @@ const I18N = {
     'status.paid': 'Тўланган', 'status.part': 'Қисман', 'status.unpaid': 'Тўланмаган',
     'debt.new': 'Янги қарз', 'debt.debtor': 'Қарздор', 'debt.datetime': 'Сана ва вақт',
     'debt.items': 'Товарлар', 'debt.optional': '(ихтиёрий)', 'debt.addItem': '+ Товар бириктириш',
-    'debt.manual': 'Суммани қўлда киритаман', 'debt.sum': 'Қарз суммаси (сўм)', 'debt.total': 'Жами қарз',
+    'debt.manual': 'Суммани қўлда киритаман', 'debt.sum': 'Қарз суммаси', 'debt.total': 'Жами қарз',
     'debt.save': 'Сақлаш', 'debt.cancel': 'Бекор қилиш',
     'debt.needClient': 'Аввал База бўлимида мижоз қўшинг',
     'debt.needProduct': 'Аввал База бўлимида товар қўшинг',
@@ -158,7 +161,10 @@ const I18N = {
     'users.needName': 'Исм фамилияни киритинг.', 'users.badEmail': "Email нотўғри форматда.",
     'users.shortPass': 'Парол камида 6 белгидан иборат бўлсин.',
     'users.exists': 'Бу email билан фойдаланувчи мавжуд.', 'users.added': 'Фойдаланувчи қўшилди',
-    'ui.close': 'Ёпиш', 'ui.ok': 'Тасдиқлаш', 'script.latn': 'Lotin', 'script.cyrl': 'Кирилл'
+    'ui.close': 'Ёпиш', 'ui.ok': 'Тасдиқлаш', 'script.latn': 'Lotin', 'script.cyrl': 'Кирилл',
+    'cur.uzs': 'Сўм', 'cur.usd': 'USD', 'cur.rate': '1 USD курс',
+    'cur.cbu': 'Марказий банк', 'cur.cbuOff': 'Охирги сақланган курс',
+    'debt.currency': 'Валюта', 'nak.native': 'Қарз валютаси'
   }
 };
 
@@ -234,6 +240,7 @@ function applyStatic() {
       b.onclick = () => setScript(b.dataset.script);
     });
   });
+  if (typeof paintCurrency === 'function') paintCurrency();
 }
 
 function setScript(mode) {

@@ -18,6 +18,7 @@ function bootShell(page) {
   if (!me) { location.replace('index.html'); return false; }
   if (page === 'users' && !can('users')) { location.replace('debts.html'); return false; }
   applyStatic();
+  startCbuRate();
   const name = $('#meName'), role = $('#meRole');
   if (name) name.textContent = disp(me.name);
   if (role) role.textContent = roleName(me.role);

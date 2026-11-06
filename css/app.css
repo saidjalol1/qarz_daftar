@@ -72,13 +72,16 @@ tr.click{cursor:pointer}tr.click:hover td{background:#F7F9FB}
   .app{grid-template-columns:1fr}
   .side{position:fixed;top:auto;bottom:0;left:0;right:0;height:auto;flex-direction:row;padding:6px 8px calc(6px + env(safe-area-inset-bottom));z-index:40;box-shadow:0 -6px 20px rgba(0,0,0,.2)}
   .brand,.me .who-me,.side .sp{display:none}
-  .side .script-switch{position:fixed;top:10px;right:10px;z-index:45;margin:0;background:#fff;box-shadow:var(--sh)}
-  .side .script-switch button{color:var(--muted)}
-  .side .script-switch button.on{background:var(--brand);color:#fff}
+  .side-fx{position:fixed;top:8px;right:8px;z-index:45;margin:0;background:#fff;padding:6px;border-radius:10px;box-shadow:var(--sh);width:148px}
+  .side-fx .script-switch button{color:var(--muted)}
+  .side-fx .script-switch button.on{background:var(--brand);color:#fff}
+  .rate-box{color:var(--muted)}
+  .rate-box .input[readonly]{background:var(--bg);color:var(--ink)}
+  .rate-box small{color:var(--muted)}
   .nav{display:flex;flex:1;justify-content:space-around;min-width:0}
   .nav a{flex-direction:column;gap:2px;font-size:.68rem;padding:6px 6px;min-width:0}
   .me{margin:0;padding:0;border:0}
-  .main{padding:52px 12px 96px;overflow-x:clip}
+  .main{padding:132px 12px 96px;overflow-x:clip}
   .head{align-items:stretch}
   .head h2{font-size:1.35rem}
   .head .btn{width:100%}

@@ -13,8 +13,9 @@ const seed = () => {
       { id: c[1], name: 'Dilnoza Yusupova', phone: '+998935554433', tg: '' },
       { id: c[2], name: 'Bobur Do\'stmatov', phone: '+998977001122', tg: 'bobur_d' }],
     products: [{ id: p[0], name: 'Un (Oliy nav)' }, { id: p[1], name: 'Yog\' 5 litr' }, { id: p[2], name: 'Shakar' }],
+    usdRate: 12500,
     debts: [{
-      id: uid(), no: 1, clientId: c[0], date: nowISO(), manual: false, archived: false,
+      id: uid(), no: 1, clientId: c[0], date: nowISO(), manual: false, archived: false, currency: 'uzs',
       items: [{ name: 'Un (Oliy nav)', price: 8500, boxes: 10, qty: 500 }],
       total: 4250000, payments: [{ id: uid(), date: nowISO(), amount: 1000000 }]
     }]
@@ -23,7 +24,12 @@ const seed = () => {
 
 let db = JSON.parse(localStorage.getItem(KEY) || 'null') || seed();
 if (!Array.isArray(db.debts)) db.debts = [];
-db.debts.forEach(d => { if (d.archived == null) d.archived = false; });
+if (!db.usdRate) db.usdRate = 12500;
+if (!db.usdRateDate) db.usdRateDate = '';
+db.debts.forEach(d => {
+  if (d.archived == null) d.archived = false;
+  if (!d.currency) d.currency = 'uzs';
+});
 const save = () => localStorage.setItem(KEY, JSON.stringify(db));
 save();
 

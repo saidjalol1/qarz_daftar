@@ -15,7 +15,11 @@
   <aside class="side">
     <div class="brand"><i>Q</i> <span data-i18n="app.name">Qarz Daftar</span></div>
     <nav class="nav" id="nav"></nav>
-    <div class="script-switch" data-script-switch></div>
+    <div class="side-fx">
+      <div class="script-switch" data-script-switch></div>
+      <div class="script-switch" data-cur-switch></div>
+      <label class="rate-box"><span data-i18n="cur.rate">1 USD kurs</span><input class="input" id="usdRate" type="number" min="1" step="0.01" readonly><small id="usdRateHint"></small></label>
+    </div>
     <div class="me">
       <div class="who-me"><b id="meName"></b><span id="meRole"></span></div>
       <button id="logout" title="Chiqish" aria-label="Chiqish" data-i18n-aria="nav.logout">

@@ -30,14 +30,15 @@ async function nakladnoy(d) {
   doc.text(`${t('nak.phone')}: ${c.phone}`, 14, 47);
   if (c.tg) doc.text(`${t('nak.tg')}: @${c.tg}`, 14, 54);
   doc.text(`${t('nak.date')}: ${fdate(d.date)}`, W - 14, 40, { align: 'right' });
+  doc.text(`${t('nak.native')}: ${t('cur.' + nativeCur(d))}  ·  1 USD = ${usdRate().toFixed(2)} ${t('currency')}${cbuDate ? ' · ' + cbuDate : ''}`, 14, c.tg ? 61 : 54);
   const font = 'DejaVu';
-  let y = 62;
+  let y = c.tg ? 70 : 64;
   if (d.items.length) {
     doc.autoTable({
       startY: y, theme: 'grid', styles: { font, fontStyle: 'normal', fontSize: 10 },
       headStyles: { fillColor: [14, 59, 67], font, fontStyle: 'normal', textColor: 255 },
       head: [['#', t('debt.product'), t('nak.colPrice'), t('nak.colBoxes'), t('nak.colQty'), t('nak.colSum')]],
-      body: d.items.map((i, n) => [n + 1, tx(i.name), money(i.price), i.boxes || '—', itemQty(i), money(lineSum(i))]),
+      body: d.items.map((i, n) => [n + 1, tx(i.name), moneyDebt(i.price, d), i.boxes || '—', itemQty(i), moneyDebt(lineSum(i), d)]),
       columnStyles: { 2: { halign: 'right' }, 5: { halign: 'right' } }
     });
     y = doc.lastAutoTable.finalY + 8;
@@ -46,14 +47,14 @@ async function nakladnoy(d) {
     startY: y, theme: 'striped', styles: { font, fontStyle: 'normal', fontSize: 10 },
     headStyles: { fillColor: [100, 113, 127], font, fontStyle: 'normal', textColor: 255 },
     head: [[t('pdf.payDate'), t('pdf.amount')]],
-    body: d.payments.length ? d.payments.map(p => [fdate(p.date), money(p.amount)]) : [[t('pdf.noPay'), '—']],
+    body: d.payments.length ? d.payments.map(p => [fdate(p.date), moneyDebt(p.amount, d)]) : [[t('pdf.noPay'), '—']],
     columnStyles: { 1: { halign: 'right' } }, tableWidth: 90
   });
   y = doc.lastAutoTable.finalY + 10;
   doc.setFont('DejaVu'); doc.setFontSize(11);
-  doc.text(`${t('debt.total')}: ${som(d.total)}`, W - 14, y, { align: 'right' });
-  doc.text(`${t('pdf.paid')}: ${som(paid(d))}`, W - 14, y + 7, { align: 'right' });
-  doc.setFontSize(13); doc.text(`${t('nak.left')}: ${som(left(d))}`, W - 14, y + 16, { align: 'right' });
+  doc.text(`${t('debt.total')}: ${somDebt(d.total, d)}`, W - 14, y, { align: 'right' });
+  doc.text(`${t('pdf.paid')}: ${somDebt(paid(d), d)}`, W - 14, y + 7, { align: 'right' });
+  doc.setFontSize(13); doc.text(`${t('nak.left')}: ${somDebt(left(d), d)}`, W - 14, y + 16, { align: 'right' });
   const genDate = new Date().toLocaleDateString('ru-RU').replace(/\//g, '.');
   const fileName = [tx(c.name), genDate].filter(Boolean).join(' ').replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim() || 'nakladnoy';
   doc.save(`${fileName}.pdf`);
