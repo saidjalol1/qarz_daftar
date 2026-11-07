@@ -1,16 +1,20 @@
+"""
+User Management views
+"""
 import json
 import logging
-from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
-from django_ratelimit.decorators import ratelimit
-from .models import User
+
+from auth_app.decorators import api_login_required, role_required
+from ledger.models import User
 
 logger = logging.getLogger(__name__)
 
@@ -47,159 +51,21 @@ def translate_password_errors(validation_error):
     return uzbek_errors
 
 
-def home(request):
-    """Home page view - redirects based on authentication"""
-    if request.user.is_authenticated:
-        return redirect('debts')
-    return redirect('login')
-
-
-@ensure_csrf_cookie
-def login_view(request):
-    """Login page view"""
-    if request.user.is_authenticated:
-        return redirect('debts')
-    return render(request, 'login.html')
-
-
-@require_http_methods(["POST"])
-@ratelimit(key='ip', rate='5/m', method='POST')
-def api_login(request):
-    """
-    API endpoint for user login
-    Rate limited to 5 attempts per minute per IP
-    Expects JSON: {"email": "...", "password": "..."}
-    Returns JSON with user data or error
-    """
-    try:
-        data = json.loads(request.body)
-        email = data.get('email', '').strip().lower()
-        password = data.get('password', '')
-        
-        if not email or not password:
-            logger.warning(f'Login attempt with missing credentials from IP: {request.META.get("REMOTE_ADDR")}')
-            return JsonResponse({
-                'success': False,
-                'error': 'Email va parol kiritilishi shart'
-            }, status=400)
-        
-        # Authenticate user
-        user = authenticate(request, username=email, password=password)
-        
-        if user is not None:
-            if not user.is_active:
-                logger.warning(f'Login attempt for inactive user: {email}')
-                return JsonResponse({
-                    'success': False,
-                    'error': 'Hisobingiz faol emas'
-                }, status=403)
-            
-            # Login user
-            login(request, user)
-            logger.info(f'Successful login: {email}')
-            
-            # Return user data
-            return JsonResponse({
-                'success': True,
-                'user': {
-                    'id': user.id,
-                    'email': user.email,
-                    'name': user.name,
-                    'phone': user.phone,
-                    'telegram': user.telegram,
-                    'role': user.role,
-                    'is_staff': user.is_staff,
-                }
-            })
-        else:
-            logger.warning(f'Failed login attempt for: {email} from IP: {request.META.get("REMOTE_ADDR")}')
-            return JsonResponse({
-                'success': False,
-                'error': 'Email yoki parol noto\'g\'ri'
-            }, status=401)
-            
-    except json.JSONDecodeError:
-        logger.error(f'Invalid JSON in login request from IP: {request.META.get("REMOTE_ADDR")}')
-        return JsonResponse({
-            'success': False,
-            'error': 'Noto\'g\'ri ma\'lumot formati'
-        }, status=400)
-    except Exception as e:
-        logger.error(f'Login error: {str(e)}')
-        return JsonResponse({
-            'success': False,
-            'error': 'Xatolik yuz berdi'
-        }, status=500)
-
-
-@require_http_methods(["POST"])
-@login_required
-def api_logout(request):
-    """API endpoint for user logout"""
-    logout(request)
-    return JsonResponse({'success': True})
-
-
-@require_http_methods(["GET"])
-@login_required
-def api_me(request):
-    """Get current user information"""
-    user = request.user
-    return JsonResponse({
-        'success': True,
-        'user': {
-            'id': user.id,
-            'email': user.email,
-            'name': user.name,
-            'phone': user.phone,
-            'telegram': user.telegram,
-            'role': user.role,
-            'is_staff': user.is_staff,
-        }
-    })
-
-
-@login_required
-def debts_view(request):
-    """Debts page view"""
-    return render(request, 'debts.html')
-
-
-@login_required
-def archive_view(request):
-    """Archive page view"""
-    return render(request, 'archive.html')
-
-
-@login_required
-def base_view(request):
-    """Base/products page view"""
-    return render(request, 'baza.html')
-
-
 @login_required
 def users_view(request):
     """Users page view - only for managers and super users"""
     if request.user.role not in ['super', 'manager']:
-        return redirect('debts')
+        return redirect('/debts/')
     return render(request, 'users.html')
 
 
-# User Management API Endpoints
-
 @require_http_methods(["GET"])
-@login_required
+@role_required('super', 'manager')
 def api_users_list(request):
     """
-    Get list of all users - only for super and manager roles
+    Get list of all active users - only for super and manager roles
     """
-    if request.user.role not in ['super', 'manager']:
-        return JsonResponse({
-            'success': False,
-            'error': 'Ruxsat yo\'q'
-        }, status=403)
-    
-    users = User.objects.filter(is_active=True).values(
+    users = User.objects.filter(is_active=True).order_by('name').values(
         'id', 'email', 'name', 'phone', 'telegram', 'role', 'is_staff'
     )
     
@@ -210,18 +76,12 @@ def api_users_list(request):
 
 
 @require_http_methods(["POST"])
-@login_required
+@role_required('super', 'manager')
 def api_users_create(request):
     """
     Create a new user - only for super and manager roles
     Expects JSON: {"name": "...", "email": "...", "phone": "...", "telegram": "...", "password": "...", "role": "..."}
     """
-    if request.user.role not in ['super', 'manager']:
-        return JsonResponse({
-            'success': False,
-            'error': 'Ruxsat yo\'q'
-        }, status=403)
-    
     try:
         data = json.loads(request.body)
         name = data.get('name', '').strip()
@@ -319,19 +179,13 @@ def api_users_create(request):
 
 
 @require_http_methods(["PUT", "POST"])
-@login_required
+@role_required('super', 'manager')
 def api_users_update(request, user_id):
     """
     Update an existing user - only for super and manager roles
     Cannot downgrade super role
     Password is optional - only updates if provided
     """
-    if request.user.role not in ['super', 'manager']:
-        return JsonResponse({
-            'success': False,
-            'error': 'Ruxsat yo\'q'
-        }, status=403)
-    
     try:
         user = User.objects.get(id=user_id, is_active=True)
     except User.DoesNotExist:
@@ -428,18 +282,12 @@ def api_users_update(request, user_id):
 
 
 @require_http_methods(["DELETE", "POST"])
-@login_required
+@role_required('super', 'manager')
 def api_users_delete(request, user_id):
     """
     Delete a user (soft delete) - only for super and manager roles
-    Cannot delete super users
+    Cannot delete super users or yourself
     """
-    if request.user.role not in ['super', 'manager']:
-        return JsonResponse({
-            'success': False,
-            'error': 'Ruxsat yo\'q'
-        }, status=403)
-    
     try:
         user = User.objects.get(id=user_id, is_active=True)
     except User.DoesNotExist:

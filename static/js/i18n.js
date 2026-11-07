@@ -48,10 +48,17 @@ const I18N = {
     'arch.confirm': "Bu qarz o'chirilmaydi — arxivga ko'chiriladi. Davom etasizmi?",
     'arch.done': 'Qarz arxivga ko\'chirildi', 'arch.restored': 'Qarz qayta tiklandi',
     'arch.auto': "Qarz to'liq to'landi va arxivga ko'chirildi",
-    'arch.title': 'Arxiv', 'arch.sub': "O'chirilgan o'rniga arxivlangan qarzlar, qarzdorlar bo'yicha guruhlangan",
+    'arch.title': 'Arxiv', 'arch.sub': "Arxivlangan qarzlar, mijozlar va tovarlar",
     'arch.search': 'Qarzdor yoki nakladnoy raqami bo\'yicha qidirish',
     'arch.empty': 'Arxiv bo\'sh', 'arch.emptyHint': "Qarzni o'chirish o'rniga arxivga ko'chiring.",
     'arch.count': '{n} ta qarz', 'arch.total': 'Jami',
+    'arch.debts': 'Qarzlar', 'arch.date': 'Arxivlangan',
+    'arch.noDebts': "Arxivlangan qarz yo'q", 'arch.noClients': "Arxivlangan mijoz yo'q",
+    'arch.noProducts': "Arxivlangan tovar yo'q",
+    'arch.restore': 'Qayta tiklash', 'arch.restoreBtn': 'Tiklash',
+    'arch.restoreDebt': '№{n} qarzni qayta tiklamoqchimisiz?',
+    'arch.restoreClient': '{n} mijozni qayta tiklamoqchimisiz?',
+    'arch.restoreProduct': '{n} tovarni qayta tiklamoqchimisiz?',
     'pdf.fail': "PDF kutubxonasi yuklanmadi. Internetni tekshiring.",
     'pdf.font': "PDF shrifti yuklanmadi. Internetni tekshiring.",
     'pdf.title': 'NAKLADNOY № {n}', 'pdf.brand': 'Qarz Daftar', 'pdf.payDate': "To'lov sanasi",
@@ -67,7 +74,8 @@ const I18N = {
     'base.editOf': 'tahriri', 'base.addOf': "qo'shish", 'base.fullName': 'Ism familiya',
     'base.prodName': 'Tovar nomi', 'base.phone': 'Telefon raqami', 'base.tg': 'Telegram username',
     'base.needNameC': 'Ismni kiriting.', 'base.needNameP': 'Tovar nomini kiriting.',
-    'base.needPhone': 'Telefon raqamini kiriting.', 'base.saved': 'Saqlandi',
+    'base.needPhone': 'Telefon raqamini kiriting.', 'base.invalidPhone': "Telefon raqam noto'g'ri",
+    'base.saved': 'Saqlandi',
     'users.title': 'Foydalanuvchilar', 'users.sub': 'Tizimga kirish huquqi va rollar',
     'users.add': "+ Foydalanuvchi qo'shish", 'users.colName': 'Ism familiya',
     'users.edit': 'Tahrirlash', 'users.editTitle': 'Foydalanuvchini tahrirlash',
@@ -134,10 +142,17 @@ const I18N = {
     'arch.confirm': 'Бу қарз ўчирилмайди — архивга кўчирилади. Давом этасизми?',
     'arch.done': 'Қарз архивга кўчирилди', 'arch.restored': 'Қарз қайта тикланди',
     'arch.auto': 'Қарз тўлиқ тўланди ва архивга кўчирилди',
-    'arch.title': 'Архив', 'arch.sub': 'Ўчирилган ўрнига архивланган қарзлар, қарздорлар бўйича гуруҳланган',
+    'arch.title': 'Архив', 'arch.sub': 'Архивланган қарзлар, мижозлар ва товарлар',
     'arch.search': 'Қарздор ёки накладной рақами бўйича қидириш',
     'arch.empty': 'Архив бўш', 'arch.emptyHint': 'Қарзни ўчириш ўрнига архивга кўчиринг.',
     'arch.count': '{n} та қарз', 'arch.total': 'Жами',
+    'arch.debts': 'Қарзлар', 'arch.date': 'Архивланган',
+    'arch.noDebts': 'Архивланган қарз йўқ', 'arch.noClients': 'Архивланган мижоз йўқ',
+    'arch.noProducts': 'Архивланган товар йўқ',
+    'arch.restore': 'Қайта тиклаш', 'arch.restoreBtn': 'Тиклаш',
+    'arch.restoreDebt': '№{n} қарзни қайта тикламоқчимисиз?',
+    'arch.restoreClient': '{n} мижозни қайта тикламоқчимисиз?',
+    'arch.restoreProduct': '{n} товарни қайта тикламоқчимисиз?',
     'pdf.fail': 'PDF кутубхонаси юкланмади. Интернетни текширинг.',
     'pdf.font': 'PDF шрифти юкланмади. Интернетни текширинг.',
     'pdf.title': 'НАКЛАДНОЙ № {n}', 'pdf.brand': 'Қарз Дафтар', 'pdf.payDate': 'Тўлов санаси',
@@ -153,7 +168,8 @@ const I18N = {
     'base.editOf': 'таҳрири', 'base.addOf': 'қўшиш', 'base.fullName': 'Исм фамилия',
     'base.prodName': 'Товар номи', 'base.phone': 'Телефон рақами', 'base.tg': 'Telegram username',
     'base.needNameC': 'Исмни киритинг.', 'base.needNameP': 'Товар номини киритинг.',
-    'base.needPhone': 'Телефон рақамини киритинг.', 'base.saved': 'Сақланди',
+    'base.needPhone': 'Телефон рақамини киритинг.', 'base.invalidPhone': 'Телефон рақам нотўғри',
+    'base.saved': 'Сақланди',
     'users.title': 'Фойдаланувчилар', 'users.sub': 'Тизимга кириш ҳуқуқи ва роллар',
     'users.add': '+ Фойдаланувчи қўшиш', 'users.colName': 'Исм фамилия',
     'users.edit': 'Таҳрирлаш', 'users.editTitle': 'Фойдаланувчини таҳрирлаш',
@@ -257,8 +273,8 @@ function setScript(mode) {
   if (mode !== 'latn' && mode !== 'cyrl') return;
   script = mode;
   localStorage.setItem(SCRIPT_KEY, script);
-  if (typeof closeModal === 'function') closeModal();
+  // Don't close modal or reload shell - just update the display
   applyStatic();
-  if (typeof bootShell === 'function' && me && $('#nav')) bootShell(document.body.dataset.page);
+  // Only re-render the current view, don't reload navigation
   if (typeof renderPage === 'function') renderPage();
 }

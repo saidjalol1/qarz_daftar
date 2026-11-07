@@ -1,5 +1,8 @@
 'use strict';
 
+// Global user state - populated from backend API
+let me = JSON.parse(sessionStorage.getItem('qd_me') || 'null');
+
 const PAGES = {
   debts: '/debts/',
   archive: '/archive/',

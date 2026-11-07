@@ -40,7 +40,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Core app with models
     'ledger',
+    # Feature apps
+    'auth_app',
+    'users_app',
+    'base_app',
+    'debts_app',
+    'archive_app',
 ]
 
 MIDDLEWARE = [
@@ -131,8 +138,12 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = not DEBUG  # True in production with HTTPS
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_SAVE_EVERY_REQUEST = False
-CSRF_COOKIE_HTTPONLY = True
+
+# CSRF settings
+CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript to read CSRF cookie
 CSRF_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_USE_SESSIONS = False  # Use cookie-based CSRF tokens
 
 # Security headers
 SECURE_BROWSER_XSS_FILTER = True

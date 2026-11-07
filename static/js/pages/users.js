@@ -4,7 +4,7 @@ let usersCache = [];
 
 async function loadUsers() {
   try {
-    const res = await fetch('/api/users/', {
+    const res = await fetch('/users/api/', {
       method: 'GET',
       headers: { 'X-CSRFToken': getCsrf() },
       credentials: 'same-origin'
@@ -64,7 +64,7 @@ async function viewUsers() {
 
 async function createUser(userData) {
   try {
-    const res = await fetch('/api/users/create/', {
+    const res = await fetch('/users/api/create/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ async function createUser(userData) {
 
 async function updateUser(userId, userData) {
   try {
-    const res = await fetch(`/api/users/${userId}/update/`, {
+    const res = await fetch(`/users/api/${userId}/update/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -123,7 +123,7 @@ async function deleteUser(userId) {
       toast(disp(t('users.cannotDeleteSuper') || 'Super admin foydalanuvchisini o\'chirib bo\'lmaydi'));
       return false;
     }
-    const res = await fetch(`/api/users/${userId}/delete/`, {
+    const res = await fetch(`/users/api/${userId}/delete/`, {
       method: 'POST',
       headers: { 'X-CSRFToken': getCsrf() },
       credentials: 'same-origin'

@@ -27,9 +27,11 @@ const CBU_USD = 'https://cbu.uz/uz/arkhiv-kursov-valyut/json/USD/';
 let displayCur = localStorage.getItem(CUR_KEY) === 'usd' ? 'usd' : 'uzs';
 let cbuLive = false;
 let cbuBusy = false;
-let cbuDate = db.usdRateDate || '';
+let cbuDate = localStorage.getItem('qd_usd_date') || '';
+let storedUsdRate = parseFloat(localStorage.getItem('qd_usd_rate')) || 12500;
+
 const nativeCur = d => d && d.currency === 'usd' ? 'usd' : 'uzs';
-const usdRate = () => Math.max(1, Number(db.usdRate) || 12500);
+const usdRate = () => Math.max(1, Number(storedUsdRate) || 12500);
 const cbuUsdUrl = () => {
   const d = new Date();
   const p = n => String(n).padStart(2, '0');
@@ -51,12 +53,13 @@ async function fetchCbuRate() {
     if (!res.ok) throw new Error('cbu');
     const parsed = parseCbuUsd(await res.json());
     if (!parsed) throw new Error('cbu');
-    const changed = db.usdRate !== parsed.rate || db.usdRateDate !== parsed.date;
+    const changed = storedUsdRate !== parsed.rate || cbuDate !== parsed.date;
     cbuLive = true;
     cbuDate = parsed.date;
-    db.usdRate = parsed.rate;
-    db.usdRateDate = parsed.date;
-    if (changed) save();
+    storedUsdRate = parsed.rate;
+    // Save to localStorage
+    localStorage.setItem('qd_usd_rate', parsed.rate.toString());
+    localStorage.setItem('qd_usd_date', parsed.date);
     paintCurrency();
     if (changed && typeof renderPage === 'function') renderPage();
   } catch (e) {
@@ -105,9 +108,9 @@ function setDisplayCur(mode) {
   if (mode !== 'uzs' && mode !== 'usd') return;
   displayCur = mode;
   localStorage.setItem(CUR_KEY, displayCur);
-  if (typeof closeModal === 'function') closeModal();
+  // Don't close modal or reload shell - just update the display
   applyStatic();
-  if (typeof bootShell === 'function' && me && $('#nav')) bootShell(document.body.dataset.page);
+  // Only re-render the current view, don't reload navigation
   if (typeof renderPage === 'function') renderPage();
 }
 

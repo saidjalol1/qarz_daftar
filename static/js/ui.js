@@ -16,7 +16,12 @@ function modal(title, body, foot, wide) {
   root.onclick = e => { if (e.target.classList.contains('ov') || e.target.closest('[data-x]')) closeModal(); };
 }
 
-const closeModal = () => { const root = $('#modalRoot'); if (root) root.innerHTML = ''; };
+const closeModal = () => { 
+  const root = $('#modalRoot'); 
+  if (root) root.innerHTML = ''; 
+  // Clear form data when modal closes
+  if (typeof currentFormData !== 'undefined') currentFormData = null;
+};
 const empty = (title, sub) => `<div class="empty"><b>${title}</b>${sub}</div>`;
 
 let askDone = null;

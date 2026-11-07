@@ -67,28 +67,39 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Client(models.Model):
-    name = models.CharField(max_length=150)
-    phone = models.CharField(max_length=32)
+    name = models.CharField(max_length=150, db_index=True)
+    phone = models.CharField(max_length=32, db_index=True)
     telegram = models.CharField(max_length=64, blank=True)
+    is_archived = models.BooleanField(default=False)  # Archive instead of delete if has debts
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'klient'
         verbose_name_plural = 'klientlar'
         ordering = ['name']
+        indexes = [
+            models.Index(fields=['name']),
+            models.Index(fields=['phone']),
+            models.Index(fields=['-created_at']),
+        ]
 
     def __str__(self):
         return self.name
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=150)
+    name = models.CharField(max_length=150, db_index=True)
+    is_archived = models.BooleanField(default=False)  # Archive instead of delete if used in debts
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'mahsulot'
         verbose_name_plural = 'mahsulotlar'
         ordering = ['name']
+        indexes = [
+            models.Index(fields=['name']),
+            models.Index(fields=['-created_at']),
+        ]
 
     def __str__(self):
         return self.name
