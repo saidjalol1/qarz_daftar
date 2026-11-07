@@ -10,8 +10,14 @@ Refactored structure with separate apps for each feature:
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic.base import RedirectView
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
+    # Favicon
+    path('favicon.ico', RedirectView.as_view(url=settings.STATIC_URL + 'favicon.ico', permanent=True)),
+    
     # Authentication & Home
     path('', include('auth_app.urls')),
     
@@ -24,3 +30,7 @@ urlpatterns = [
     # Admin
     path('admin/', admin.site.urls),
 ]
+
+# Serve static files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

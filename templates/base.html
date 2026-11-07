@@ -5,7 +5,48 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block title %}Qarz Daftar{% endblock %}</title>
+<meta name="description" content="Qarz va savdo boshqaruv tizimi - professional debt and sales management system">
 <meta name="color-scheme" content="light">
+
+<!-- 
+  Favicons and App Icons
+  - favicon.ico: Multi-resolution icon for browsers (16x16, 32x32, 48x48)
+  - PNG favicons: Individual sizes for different contexts
+  - apple-touch-icon: iOS home screen icon (180x180)
+  - android-chrome: Android home screen icons (192x192, 512x512)
+  - site.webmanifest: PWA manifest for "Add to Home Screen" functionality
+  - Theme color: #047857 (brand green)
+-->
+<!-- Favicons -->
+<link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+<link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
+<link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/favicon-48x48.png' %}">
+
+<!-- Apple Touch Icon (iOS) -->
+<link rel="apple-touch-icon" href="{% static 'images/apple-touch-icon.png' %}">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Qarz Daftar">
+
+<!-- Android Chrome -->
+<link rel="icon" type="image/png" sizes="192x192" href="{% static 'images/android-chrome-192x192.png' %}">
+<link rel="icon" type="image/png" sizes="512x512" href="{% static 'images/android-chrome-512x512.png' %}">
+
+<!-- Web App Manifest (PWA) -->
+<link rel="manifest" href="{% static 'site.webmanifest' %}">
+
+<!-- Theme Color -->
+<meta name="theme-color" content="#047857">
+<meta name="msapplication-TileColor" content="#047857">
+<meta name="msapplication-config" content="{% static 'browserconfig.xml' %}">
+
+<!-- Open Graph / Social Media -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Qarz Daftar">
+<meta property="og:description" content="Qarz va savdo boshqaruv tizimi">
+<meta property="og:image" content="{% static 'images/android-chrome-512x512.png' %}">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'css/base.css' %}">
