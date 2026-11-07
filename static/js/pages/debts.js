@@ -443,12 +443,13 @@ function renderDebtDetail(debt) {
                 const priceInNative = parseFloat(item.price);
                 const lineSumInNative = parseFloat(item.line_sum);
                 const boxes = parseInt(item.boxes) || 0;
+                const qtyDisplay = Math.round(item.qty || 0); // Remove decimals from dona
                 return `
                   <div class="debt-item" data-item-idx="${idx}" style="display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 12px; background: #F6F8FA; border-radius: 8px; margin-bottom: 10px;">
                     <div>
                       <div style="font-weight: 600; margin-bottom: 6px; font-size: 0.95rem;">${esc(disp(item.name))}</div>
                       <div style="font-size: 0.85rem; color: var(--muted);">
-                        ${money(priceInNative, debtCurrency)} ${unit(debtCurrency)} × ${item.qty} ${disp('dona')}${boxes > 0 ? ` (${boxes} ${disp('qop')})` : ''}
+                        ${money(priceInNative, debtCurrency)} ${unit(debtCurrency)} × ${qtyDisplay} ${disp('dona')}${boxes > 0 ? ` (${boxes} ${disp('qop')})` : ''}
                       </div>
                     </div>
                     <div style="text-align: right; align-self: center;">
@@ -1098,12 +1099,13 @@ async function generatePDF(debt) {
         const priceInNative = parseFloat(item.price);
         const lineSumInNative = parseFloat(item.line_sum);
         const boxes = parseInt(item.boxes) || 0;
+        const qtyDisplay = Math.round(item.qty || 0); // Remove decimals from dona
         return [
           idx + 1,
           disp(item.name),
           money(priceInNative, debtCurrency),
           boxes || '—',
-          item.qty,
+          qtyDisplay,
           money(lineSumInNative, debtCurrency)
         ];
       });
@@ -1371,40 +1373,256 @@ async function saveEditItems(debt) {
 // HELPER FUNCTIONS
 // ============================================================================
 
-// Setup searchable input with datalist
+// Setup searchable input with datalist (mobile-friendly custom search)
 function setupSearchableInput(inputId, datalistId, dataArray, type) {
   const input = $(`#${inputId}`);
   const datalist = $(`#${datalistId}`);
   if (!input || !datalist) return;
   
-  // When user selects from datalist
-  input.addEventListener('input', function(e) {
-    const value = e.target.value;
-    
-    // Check if value matches any option
-    const options = datalist.querySelectorAll('option');
-    let matchedId = null;
-    
-    for (let option of options) {
-      if (option.value === value) {
-        matchedId = option.dataset.id;
-        break;
-      }
-    }
-    
-    if (matchedId) {
-      input.dataset.selectedId = matchedId;
-    } else {
-      delete input.dataset.selectedId;
-    }
-  });
+  // Detect if mobile device
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
   
-  // Clear selection if input is emptied
-  input.addEventListener('blur', function(e) {
-    if (!e.target.value) {
-      delete e.target.dataset.selectedId;
+  if (isMobile) {
+    // Mobile: Custom searchable modal
+    
+    // Hide datalist
+    datalist.style.display = 'none';
+    
+    // Make input readonly and add click handler
+    input.setAttribute('readonly', 'readonly');
+    input.style.cursor = 'pointer';
+    input.style.caretColor = 'transparent';
+    
+    // Add search icon indicator
+    input.style.paddingRight = '40px';
+    input.style.backgroundImage = 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'20\' height=\'20\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23666\' stroke-width=\'2\'%3E%3Ccircle cx=\'11\' cy=\'11\' r=\'8\'/%3E%3Cpath d=\'m21 21-4.35-4.35\'/%3E%3C/svg%3E")';
+    input.style.backgroundRepeat = 'no-repeat';
+    input.style.backgroundPosition = 'right 12px center';
+    input.style.backgroundSize = '20px';
+    
+    // Store the handler so we can ensure it's only attached once
+    if (!input._mobileSearchHandler) {
+      input._mobileSearchHandler = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        showMobileSearchModal(input, dataArray, type);
+      };
+      
+      input.onclick = input._mobileSearchHandler;
+      
+      // Prevent keyboard from showing
+      input.onfocus = function(e) {
+        e.preventDefault();
+        this.blur();
+        showMobileSearchModal(input, dataArray, type);
+      };
     }
-  });
+  } else {
+    // Desktop: Use datalist as before
+    
+    // Remove mobile handlers if they exist
+    if (input._mobileSearchHandler) {
+      input.onclick = null;
+      input.onfocus = null;
+      delete input._mobileSearchHandler;
+    }
+    
+    // Remove mobile styling
+    input.removeAttribute('readonly');
+    input.style.cursor = '';
+    input.style.caretColor = '';
+    input.style.paddingRight = '';
+    input.style.backgroundImage = '';
+    datalist.style.display = '';
+    
+    input.addEventListener('input', function(e) {
+      const value = e.target.value;
+      
+      // Check if value matches any option
+      const options = datalist.querySelectorAll('option');
+      let matchedId = null;
+      
+      for (let option of options) {
+        if (option.value === value) {
+          matchedId = option.dataset.id;
+          break;
+        }
+      }
+      
+      if (matchedId) {
+        input.dataset.selectedId = matchedId;
+      } else {
+        delete input.dataset.selectedId;
+      }
+    });
+    
+    // Clear selection if input is emptied
+    input.addEventListener('blur', function(e) {
+      if (!e.target.value) {
+        delete e.target.dataset.selectedId;
+      }
+    });
+  }
+}
+
+// Mobile search modal
+function showMobileSearchModal(targetInput, dataArray, type) {
+  // Prevent multiple modals
+  const existing = $('#mobileSearchOverlay');
+  if (existing) {
+    existing.remove();
+  }
+  
+  const searchPlaceholder = type === 'client' ? 'Mijozni qidirish...' : 'Tovarni qidirish...';
+  const modalHtml = `
+    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: flex-end;" id="mobileSearchOverlay">
+      <div style="background: white; width: 100%; max-height: 80vh; border-radius: 16px 16px 0 0; display: flex; flex-direction: column; animation: slideUp 0.3s ease-out;">
+        <div style="padding: 16px; border-bottom: 1px solid #E5E7EB; display: flex; align-items: center; gap: 12px;">
+          <input type="text" id="mobileSearchInput" placeholder="${esc(disp(searchPlaceholder))}" style="flex: 1; padding: 12px 16px; border: 1px solid #E5E7EB; border-radius: 8px; font-size: 1rem;" autofocus>
+          <button onclick="closeMobileSearch()" style="padding: 12px 16px; background: #F3F4F6; border: none; border-radius: 8px; font-weight: 600; color: #6B7280;">${esc(disp('Yopish'))}</button>
+        </div>
+        <div id="mobileSearchResults" style="flex: 1; overflow-y: auto; padding: 8px;">
+          <!-- Results here -->
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+  
+  // Add animation keyframes
+  if (!document.getElementById('mobileSearchStyle')) {
+    const style = document.createElement('style');
+    style.id = 'mobileSearchStyle';
+    style.textContent = `
+      @keyframes slideUp {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  
+  const searchInput = $('#mobileSearchInput');
+  const resultsDiv = $('#mobileSearchResults');
+  
+  // Render all results initially
+  function renderResults(filteredData) {
+    if (filteredData.length === 0) {
+      resultsDiv.innerHTML = `<div style="padding: 48px 20px; text-align: center; color: #9CA3AF;">${esc(disp('Natija topilmadi'))}</div>`;
+      return;
+    }
+    
+    resultsDiv.innerHTML = filteredData.map(item => {
+      if (type === 'client') {
+        const phoneText = item.phone ? esc(item.phone) : '';
+        const telegramText = item.telegram ? ' • @' + esc(item.telegram) : '';
+        const subtitle = phoneText + telegramText;
+        
+        return `
+          <div class="mobile-search-item" data-id="${item.id}" data-name="${esc(disp(item.name))}" style="padding: 14px 16px; border-bottom: 1px solid #F3F4F6; cursor: pointer; transition: background 0.2s;">
+            <div style="font-weight: 600; font-size: 1rem; margin-bottom: 4px; color: #111827;">${esc(disp(item.name))}</div>
+            ${subtitle ? `<div style="font-size: 0.9rem; color: #6B7280;">${subtitle}</div>` : ''}
+          </div>
+        `;
+      } else {
+        return `
+          <div class="mobile-search-item" data-id="${item.id}" data-name="${esc(disp(item.name))}" style="padding: 14px 16px; border-bottom: 1px solid #F3F4F6; cursor: pointer; transition: background 0.2s;">
+            <div style="font-weight: 600; font-size: 1rem; color: #111827;">${esc(disp(item.name))}</div>
+          </div>
+        `;
+      }
+    }).join('');
+    
+    // Add click handlers
+    document.querySelectorAll('.mobile-search-item').forEach(el => {
+      el.onclick = function() {
+        targetInput.value = this.dataset.name;
+        targetInput.dataset.selectedId = this.dataset.id;
+        closeMobileSearch();
+        
+        // Trigger change event so updateTotal fires
+        const event = new Event('change', { bubbles: true });
+        targetInput.dispatchEvent(event);
+        
+        // Also trigger input event for any other listeners
+        const inputEvent = new Event('input', { bubbles: true });
+        targetInput.dispatchEvent(inputEvent);
+      };
+      
+      // Add touch feedback
+      el.addEventListener('touchstart', function() {
+        this.style.background = '#F3F4F6';
+      }, { passive: true });
+      
+      el.addEventListener('touchend', function() {
+        setTimeout(() => {
+          this.style.background = '';
+        }, 150);
+      }, { passive: true });
+      
+      el.addEventListener('touchcancel', function() {
+        this.style.background = '';
+      }, { passive: true });
+    });
+  }
+  
+  // Initial render
+  renderResults(dataArray);
+  
+  // Search functionality
+  searchInput.oninput = function() {
+    const query = this.value.toLowerCase().trim();
+    
+    if (!query) {
+      renderResults(dataArray);
+      return;
+    }
+    
+    const filtered = dataArray.filter(item => {
+      if (type === 'client') {
+        return disp(item.name).toLowerCase().includes(query) ||
+               (item.phone && item.phone.includes(query)) ||
+               (item.telegram && item.telegram.toLowerCase().includes(query));
+      } else {
+        return disp(item.name).toLowerCase().includes(query);
+      }
+    });
+    
+    renderResults(filtered);
+  };
+  
+  // Close on overlay click
+  $('#mobileSearchOverlay').onclick = function(e) {
+    if (e.target === this) {
+      closeMobileSearch();
+    }
+  };
+  
+  // Focus search input
+  setTimeout(() => searchInput.focus(), 100);
+}
+
+// Close mobile search modal
+window.closeMobileSearch = function() {
+  const overlay = $('#mobileSearchOverlay');
+  if (overlay) {
+    overlay.style.animation = 'slideDown 0.2s ease-in';
+    setTimeout(() => overlay.remove(), 200);
+  }
+};
+
+// Add slideDown animation
+if (!document.getElementById('mobileSearchStyleDown')) {
+  const style = document.createElement('style');
+  style.id = 'mobileSearchStyleDown';
+  style.textContent = `
+    @keyframes slideDown {
+      from { transform: translateY(0); }
+      to { transform: translateY(100%); }
+    }
+  `;
+  document.head.appendChild(style);
 }
 
 async function loadClientsForSelect() {

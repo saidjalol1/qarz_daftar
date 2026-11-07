@@ -316,3 +316,15 @@ table.stack th,table.stack td{min-width:120px}
     font-weight:600!important;
   }
 }
+
+
+/* Mobile-friendly select dropdowns */
+@media(max-width:768px){
+  select.input{
+    font-size:1rem!important;
+    padding:12px!important;
+    appearance:auto!important;
+    -webkit-appearance:menulist!important;
+    -moz-appearance:menulist!important;
+  }
+}
