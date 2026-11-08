@@ -77,10 +77,16 @@ function renderDebtsList(groups, summary, pagination) {
   totalPages = pagination.total_pages;
   currentPage = pagination.page;
   
-  // Convert summary totals from their native currencies to display currency
-  // Summary already aggregates across all currencies, but we need to ensure proper conversion
-  const displayTotalLeft = parseFloat(summary.total_left);
-  const displayTotalPaid = parseFloat(summary.total_paid);
+  // Convert summary totals from native currencies to display currency
+  // Backend now returns separated uzs_left, uzs_paid, usd_left, usd_paid
+  const uzsLeft = parseFloat(summary.uzs_left) || 0;
+  const uzsPaid = parseFloat(summary.uzs_paid) || 0;
+  const usdLeft = parseFloat(summary.usd_left) || 0;
+  const usdPaid = parseFloat(summary.usd_paid) || 0;
+  
+  // Convert to display currency
+  const displayTotalLeft = convert(uzsLeft, 'uzs', displayCur) + convert(usdLeft, 'usd', displayCur);
+  const displayTotalPaid = convert(uzsPaid, 'uzs', displayCur) + convert(usdPaid, 'usd', displayCur);
   
   $('#view').innerHTML = `
     <div class="head">

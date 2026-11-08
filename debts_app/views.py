@@ -93,6 +93,13 @@ def api_debts_list(request):
                     'total': Decimal('0'),
                     'paid': Decimal('0'),
                     'left': Decimal('0'),
+                    # Track currency-separated totals for accurate summary
+                    'total_uzs': Decimal('0'),
+                    'paid_uzs': Decimal('0'),
+                    'left_uzs': Decimal('0'),
+                    'total_usd': Decimal('0'),
+                    'paid_usd': Decimal('0'),
+                    'left_usd': Decimal('0'),
                 }
             
             debt_data = {
@@ -106,9 +113,16 @@ def api_debts_list(request):
             }
             
             client_debts[client_id]['debts'].append(debt_data)
-            client_debts[client_id]['total'] += debt.total
-            client_debts[client_id]['paid'] += paid
-            client_debts[client_id]['left'] += left
+            
+            # Sum amounts by currency
+            if debt.currency == 'usd':
+                client_debts[client_id]['total_usd'] += debt.total
+                client_debts[client_id]['paid_usd'] += paid
+                client_debts[client_id]['left_usd'] += left
+            else:  # uzs
+                client_debts[client_id]['total_uzs'] += debt.total
+                client_debts[client_id]['paid_uzs'] += paid
+                client_debts[client_id]['left_uzs'] += left
         
         # Convert to list and search filter
         result = list(client_debts.values())
@@ -122,11 +136,18 @@ def api_debts_list(request):
                    (item['client']['telegram'] and search_lower in item['client']['telegram'].lower())
             ]
         
-        # Convert Decimal to string for JSON
+        # Calculate total for each client (for display) - keeping native currencies
         for item in result:
-            item['total'] = str(item['total'])
-            item['paid'] = str(item['paid'])
-            item['left'] = str(item['left'])
+            item['total'] = str(item['total_uzs'] + item['total_usd'])
+            item['paid'] = str(item['paid_uzs'] + item['paid_usd'])
+            item['left'] = str(item['left_uzs'] + item['left_usd'])
+            # Remove temp currency-specific fields
+            del item['total_uzs']
+            del item['total_usd']
+            del item['paid_uzs']
+            del item['paid_usd']
+            del item['left_uzs']
+            del item['left_usd']
         
         # Sort by left amount (highest first)
         result.sort(key=lambda x: Decimal(x['left']), reverse=True)
@@ -137,17 +158,49 @@ def api_debts_list(request):
         end = start + page_size
         result_page = result[start:end]
         
-        # Calculate summary
-        total_left = sum(Decimal(item['left']) for item in result)
-        total_paid = sum(Decimal(item['paid']) for item in result)
+        # Calculate summary - return SEPARATED BY CURRENCY for frontend to convert
+        summary_uzs_left = Decimal('0')
+        summary_uzs_paid = Decimal('0')
+        summary_usd_left = Decimal('0')
+        summary_usd_paid = Decimal('0')
+        
+        # Re-iterate original debts to get accurate currency-separated totals
+        for debt in debts:
+            paid = sum(p.amount for p in debt.payments.all())
+            left = debt.total - paid
+            
+            # Apply status filter
+            if status_filter == 'open' and left <= 0:
+                continue
+            elif status_filter == 'closed' and left > 0:
+                continue
+            
+            # Apply search filter
+            if search:
+                search_lower = search.lower()
+                if not (search_lower in debt.client.name.lower() or
+                       search_lower in debt.client.phone or
+                       (debt.client.telegram and search_lower in debt.client.telegram.lower())):
+                    continue
+            
+            # Sum by currency
+            if debt.currency == 'usd':
+                summary_usd_left += left
+                summary_usd_paid += paid
+            else:
+                summary_uzs_left += left
+                summary_uzs_paid += paid
+        
         debtors_count = len([item for item in result if Decimal(item['left']) > 0])
         
         return JsonResponse({
             'success': True,
             'groups': result_page,
             'summary': {
-                'total_left': str(total_left),
-                'total_paid': str(total_paid),
+                'uzs_left': str(summary_uzs_left),
+                'uzs_paid': str(summary_uzs_paid),
+                'usd_left': str(summary_usd_left),
+                'usd_paid': str(summary_usd_paid),
                 'debtors_count': debtors_count,
             },
             'pagination': {
